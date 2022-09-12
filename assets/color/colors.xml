@@ -6,4 +6,5 @@
     <color name="gray_410">#979797</color>
     <color name="background_color" type="material">#f19100</color>
     <color name="submit_button_background" type="material">#f19100</color>
+    <color name="primary_color" type="material">#f19100</color>
 </resources>
