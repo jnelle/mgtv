@@ -8,7 +8,7 @@
 PRODUCT_NAME = mgtv
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.mgtv
+PRODUCT_BUNDLE_IDENTIFIER = com.massengeschmack.tv
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2022 com.example. All rights reserved.

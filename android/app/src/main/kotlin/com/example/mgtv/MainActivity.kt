@@ -1,4 +1,4 @@
-package com.example.mgtv
+package com.massengeschmack.tv
 
 import io.flutter.embedding.android.FlutterActivity
 
