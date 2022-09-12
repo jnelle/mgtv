@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mgtv/gen/colors.gen.dart';
 import 'package:mgtv/ui/components/auth/input_decoration.dart';
-import 'package:mgtv/ui/components/snack_bar/snack_bar.dart';
-import 'package:mgtv/ui/user_view_model.dart';
 
-class LoginFormTemplate extends HookConsumerWidget {
-  const LoginFormTemplate({Key? key}) : super(key: key);
+class LoginFormTemplate extends HookWidget {
+  const LoginFormTemplate({
+    Key? key,
+    required this.formkey,
+    required this.emailTextController,
+    required this.passwordTextController,
+    required this.isLoading,
+    required this.onPressed,
+  }) : super(key: key);
+
+  final GlobalKey<FormState> formkey;
+  final TextEditingController emailTextController;
+  final TextEditingController passwordTextController;
+  final bool isLoading;
+  final void Function()? onPressed;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final GlobalKey<FormState> formkey =
-        useMemoized(() => GlobalKey<FormState>());
-    final TextEditingController emailTextController = TextEditingController();
-    final TextEditingController passwordTextController =
-        TextEditingController();
-    ValueNotifier<bool> isLoading = useState(false);
-    UserViewModel userViewModel = ref.read(userViewModelProvider);
+  Widget build(BuildContext context) {
     return Form(
       key: formkey,
       child: Column(
@@ -64,7 +67,8 @@ class LoginFormTemplate extends HookConsumerWidget {
               minimumSize: const Size.fromHeight(50),
               shape: const StadiumBorder(),
             ),
-            child: isLoading.value
+            onPressed: onPressed,
+            child: isLoading
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const <Widget>[
@@ -74,18 +78,6 @@ class LoginFormTemplate extends HookConsumerWidget {
                     ],
                   )
                 : const Text('Login'),
-            onPressed: () async {
-              isLoading.value = true;
-              if (formkey.currentState!.validate()) {
-                await userViewModel.login(
-                    email: emailTextController.text,
-                    password: passwordTextController.text);
-              } else {
-                showErrorSnackbar(
-                    context: context, message: 'Bitte alle Felder ausfüllen!');
-                isLoading.value = false;
-              }
-            },
           ),
         ],
       ),
