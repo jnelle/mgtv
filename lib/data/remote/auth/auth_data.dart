@@ -12,7 +12,7 @@ final Provider<AuthDataSource> authDataProvider = Provider<AuthDataSource>(
 abstract class AuthDataSource {
   factory AuthDataSource(Reader reader) => _AuthDataSource(reader(dioProvider));
 
-  @POST('/index_login.php?redirect=%2F')
+  @POST('/index_login.php')
   @FormUrlEncoded()
   Future<HttpResponse<dynamic>> login({
     @Field() required String email,

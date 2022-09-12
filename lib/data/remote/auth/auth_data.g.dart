@@ -28,7 +28,7 @@ class _AuthDataSource implements AuthDataSource {
                 headers: _headers,
                 extra: _extra,
                 contentType: 'application/x-www-form-urlencoded')
-            .compose(_dio.options, '/index_login.php?redirect=%2F',
+            .compose(_dio.options, '/index_login.php',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = _result.data;
