@@ -23,7 +23,7 @@ class AppDio with DioMixin implements Dio {
         receiveTimeout: 30000,
         followRedirects: false,
         validateStatus: (int? status) {
-          return status! < 302;
+          return status! < 303;
         });
 
     this.options = options;
