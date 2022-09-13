@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mgtv/data/models/get_clip/get_clip.dart';
 import 'package:mgtv/data/models/main_feed/main_feed.dart';
 import 'package:mgtv/data/models/result/result.dart';
 import 'package:mgtv/data/remote/feed/feed_data.dart';
@@ -24,4 +25,13 @@ class FeedRepositoryImpl implements FeedRepository {
   @override
   Future<Result<HttpResponse<dynamic>>> getHtmlFeed({required String cookie}) =>
       Result.guardFuture(() => _feedDataSource.getHtmlFeed(cookie: cookie));
+
+  @override
+  Future<Result<HttpResponse<GetClip>>> getClip({
+    required String identifier,
+    required String cookie,
+    required String action,
+  }) =>
+      Result.guardFuture(() async =>
+          _feedDataSource.getClip(identifier, cookie: cookie, action: action));
 }

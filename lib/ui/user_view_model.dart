@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:mgtv/data/app_error.dart';
+import 'package:mgtv/data/models/get_clip/get_clip.dart';
 import 'package:mgtv/data/models/main_feed/main_feed.dart';
 import 'package:mgtv/data/models/result/result.dart';
 import 'package:mgtv/data/provider/storage_provider.dart';
@@ -130,4 +131,16 @@ extension FeedViewModel on UserViewModel {
         .innerHtml;
     return <String?>[subTitle, title];
   }
+
+  Future<GetClip> getClip({
+    required String identifier,
+    required String cookie,
+    required String action,
+  }) =>
+      _feedRepository
+          .getClip(identifier: identifier, cookie: cookie, action: action)
+          .then((Result<HttpResponse<GetClip>> result) => result.when(
+                success: (HttpResponse<GetClip> data) => data.data,
+                failure: (AppError error) => throw error,
+              ));
 }

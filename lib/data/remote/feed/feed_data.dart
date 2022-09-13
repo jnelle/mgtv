@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mgtv/data/models/get_clip/get_clip.dart';
 import 'package:mgtv/data/models/main_feed/main_feed.dart';
 import 'package:mgtv/data/remote/app_dio.dart';
 import 'package:retrofit/retrofit.dart';
@@ -20,4 +21,11 @@ abstract class FeedDataSource {
   @GET('/u')
   Future<HttpResponse<dynamic>> getHtmlFeed(
       {@Header('cookie') required String cookie});
+
+  @GET('/api/v1/')
+  Future<HttpResponse<GetClip>> getClip(
+    @Query('identifier') String identifier, {
+    @Header('cookie') required String cookie,
+    @Query('action') required String action,
+  });
 }
