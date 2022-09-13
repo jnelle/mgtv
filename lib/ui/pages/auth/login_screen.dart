@@ -45,55 +45,57 @@ class LoginScreen extends HookConsumerWidget {
 
     return Scaffold(
         body: SafeArea(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Center(
-            child: Assets.images.logo.svg(
-              width: context.widthPct(0.25),
-              height: context.widthPct(0.25),
-              color: Colors.orange,
-              alignment: Alignment.center,
-            ),
-          ),
-          SizedBox(
-            child: Padding(
-              padding: const EdgeInsets.all(35.0),
-              child: LoginFormTemplate(
-                isLoading: isLoading.value,
-                formkey: formkey,
-                emailTextController: emailTextController,
-                passwordTextController: passwordTextController,
-                key: UniqueKey(),
-                onPressed: () async {
-                  isLoading.value = true;
-                  if (formkey.currentState!.validate()) {
-                    try {
-                      isLoading.value = true;
-
-                      await userViewModel.login(
-                          email: emailTextController.text,
-                          password: passwordTextController.text);
-
-                      router.replace(const Home());
-                    } catch (e) {
-                      isLoading.value = false;
-                      showErrorSnackbar(
-                          context: context,
-                          message: 'Ein Fehler ist beim Login unterlaufen!');
-                    }
-                  } else {
-                    isLoading.value = false;
-
-                    showErrorSnackbar(
-                        context: context,
-                        message: 'Bitte alle Felder ausfüllen!');
-                  }
-                },
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Center(
+              child: Assets.images.logo.svg(
+                width: context.widthPct(0.25),
+                height: context.widthPct(0.25),
+                color: Colors.orange,
+                alignment: Alignment.center,
               ),
             ),
-          )
-        ],
+            SizedBox(
+              child: Padding(
+                padding: const EdgeInsets.all(35.0),
+                child: LoginFormTemplate(
+                  isLoading: isLoading.value,
+                  formkey: formkey,
+                  emailTextController: emailTextController,
+                  passwordTextController: passwordTextController,
+                  key: UniqueKey(),
+                  onPressed: () async {
+                    isLoading.value = true;
+                    if (formkey.currentState!.validate()) {
+                      try {
+                        isLoading.value = true;
+
+                        await userViewModel.login(
+                            email: emailTextController.text,
+                            password: passwordTextController.text);
+
+                        router.replace(const Home());
+                      } catch (e) {
+                        isLoading.value = false;
+                        showErrorSnackbar(
+                            context: context,
+                            message: 'Ein Fehler ist beim Login unterlaufen!');
+                      }
+                    } else {
+                      isLoading.value = false;
+
+                      showErrorSnackbar(
+                          context: context,
+                          message: 'Bitte alle Felder ausfüllen!');
+                    }
+                  },
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     ));
   }
