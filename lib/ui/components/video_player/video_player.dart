@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+// ignore: must_be_immutable
 class VideoWidget extends HookWidget {
   VideoWidget({
     Key? key,
