@@ -11,7 +11,6 @@ SliverAppBar homeAppBar({
 }) {
   BuildContext context = useContext();
   return SliverAppBar(
-    leading: const SizedBox.shrink(),
     expandedHeight: context.heightPct(0.3),
     backgroundColor: Colors.transparent,
     flexibleSpace: FlexibleSpaceBar(

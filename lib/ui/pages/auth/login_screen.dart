@@ -27,12 +27,14 @@ class LoginScreen extends HookConsumerWidget {
 
     Future<void> checkLogin() async {
       bool result = await userViewModel.isLoggedIn();
-      String? cookie = await userViewModel.getCookie();
-      if (cookie != null) {
-        userViewModel.setCookie = cookie;
-      }
+
       if (result) {
-        router.push(const Home());
+        await userViewModel.refreshCookie();
+        String? cookie = await userViewModel.getCookie();
+        if (cookie != null) {
+          userViewModel.setCookie = cookie;
+        }
+        router.replace(const Home());
       }
     }
 
@@ -73,7 +75,7 @@ class LoginScreen extends HookConsumerWidget {
                           email: emailTextController.text,
                           password: passwordTextController.text);
 
-                      router.push(const Home());
+                      router.replace(const Home());
                     } catch (e) {
                       isLoading.value = false;
                       showErrorSnackbar(
