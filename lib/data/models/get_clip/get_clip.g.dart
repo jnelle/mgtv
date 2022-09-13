@@ -16,7 +16,7 @@ GetClip _$GetClipFromJson(Map<String, dynamic> json) => GetClip(
       duration: json['duration'] as String?,
       date: json['date'] as int?,
       subscribed: json['subscribed'] as bool?,
-      teaser: json['teaser'] as String?,
+      teaser: json['teaser'] as bool?,
       files: (json['files'] as List<dynamic>?)
           ?.map((e) => File.fromJson(e as Map<String, dynamic>))
           .toList(),

@@ -32,7 +32,7 @@ class GetClip {
   String? duration;
   int? date;
   bool? subscribed;
-  String? teaser;
+  bool? teaser;
   List<File>? files;
 
   Map<String, dynamic> toJson() => _$GetClipToJson(this);
