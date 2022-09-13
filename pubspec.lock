@@ -46,9 +46,11 @@ packages:
   better_player:
     dependency: "direct main"
     description:
-      name: better_player
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: e45f447b6d3ae6a3404ddfd9663f8aeae864ddec
+      resolved-ref: e45f447b6d3ae6a3404ddfd9663f8aeae864ddec
+      url: "https://github.com/matthewrice345/betterplayer"
+    source: git
     version: "0.0.83"
   boolean_selector:
     dependency: transitive
