@@ -112,11 +112,7 @@ extension FeedViewModel on UserViewModel {
         .firstWhere((dom.Element element) =>
             element.attributes['src']!.contains('massengeschmack'))
         .attributes['src']!;
-    for (dom.Element element in pictureIterator) {
-      if (element.attributes['src']!.contains('dl.massengeschmack')) {
-        picture = element.attributes['src']!;
-      }
-    }
+
     return picture;
   }
 
