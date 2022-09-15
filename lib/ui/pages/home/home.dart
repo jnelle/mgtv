@@ -10,7 +10,7 @@ class HomeScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AutoTabsScaffold(
-      routes: const <PageRouteInfo<dynamic>>[Feed(), Feed()],
+      routes: const <PageRouteInfo<dynamic>>[Feed(), Magazine()],
       bottomNavigationBuilder: (BuildContext context, TabsRouter tabsRouter) {
         return BottomNavigationBar(
           currentIndex: tabsRouter.activeIndex,
@@ -28,7 +28,7 @@ class HomeScreen extends HookConsumerWidget {
               label: '',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.abc_sharp),
+              icon: Icon(Icons.feed_outlined),
               label: '',
             ),
           ],

@@ -4,8 +4,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:mgtv/data/app_error.dart';
 import 'package:mgtv/data/models/get_clip/get_clip.dart';
+import 'package:mgtv/data/models/get_feed/get_feed.dart';
+import 'package:mgtv/data/models/magazine/magazine.dart';
 import 'package:mgtv/data/models/main_feed/main_feed.dart';
 import 'package:mgtv/data/models/result/result.dart';
+import 'package:mgtv/data/models/subscriptions/active_subscription.dart';
+import 'package:mgtv/data/models/subscriptions/subscriptions.dart';
 import 'package:mgtv/data/provider/storage_provider.dart';
 import 'package:mgtv/data/repository/auth/auth_repository.dart';
 import 'package:mgtv/data/repository/auth/auth_repository_impl.dart';
@@ -139,4 +143,78 @@ extension FeedViewModel on UserViewModel {
                 success: (HttpResponse<GetClip> data) => data.data,
                 failure: (AppError error) => throw error,
               ));
+
+  Future<List<Magazine>> getMagazines({required String cookie}) async {
+    HttpResponse<dynamic> response = await getHtmlFeed(cookie: cookie);
+    dom.Document html = dom.Document.html(response.response.data);
+
+    List<Magazine> magazines = html
+        .querySelectorAll('#mobilemagcollapse > div > a')
+        .map((dom.Element e) =>
+            Magazine(title: e.innerHtml, shortTitle: e.attributes['href']))
+        .toList();
+    Subscriptions subscriptions = await listSubscriptions(cookie: cookie);
+
+    for (Magazine element in magazines) {
+      for (ActiveSubscription sub in subscriptions.activeSubscriptions!) {
+        if (sub.title!.contains(element.title!)) {
+          element.pid = sub.pid;
+        }
+      }
+    }
+
+    return magazines;
+  }
+
+  Future<Subscriptions> listSubscriptions({required String cookie}) async =>
+      _feedRepository.listSubscriptions(cookie: cookie).then(
+            (Result<HttpResponse<Subscriptions>> result) => result.when(
+                success: (HttpResponse<Subscriptions> data) => data.data,
+                failure: (AppError error) => throw error),
+          );
+
+  Future<GetFeed> getFeed({
+    required String action,
+    required List<String> from,
+    required int limit,
+    required int page,
+    required String cookie,
+  }) =>
+      _feedRepository
+          .getFeed(from: from, limit: limit, page: page, cookie: cookie)
+          .then((Result<GetFeed> result) => result.when(
+                success: (GetFeed data) => data,
+                failure: (AppError error) => throw error,
+              ));
+
+  Future<HttpResponse<dynamic>> getMagazinePage({
+    required String cookie,
+    required String magazine,
+  }) =>
+      _feedRepository.getMagazinePage(cookie: cookie, magazine: magazine).then(
+          (Result<HttpResponse<dynamic>> result) => result.when(
+              success: (HttpResponse<dynamic> data) => data,
+              failure: (AppError error) => throw error));
+
+  Future<String> getMagazineHeadPictures(
+      {required String cookie, required String magazine}) async {
+    HttpResponse<dynamic> response =
+        await getMagazinePage(cookie: cookie, magazine: magazine);
+    dom.Document html = dom.Document.html(response.response.data);
+
+    dom.Element? magazines =
+        html.querySelector('body > div.mag-header > div.right > style');
+    String child = magazines!.text
+        .split('url')
+        .last
+        .replaceAll('(', '')
+        .replaceAll(')', '')
+        .replaceAll(';', '')
+        .replaceAll('{', '')
+        .replaceAll('}', '')
+        .trim();
+
+    return child;
+    // return magazines;
+  }
 }
