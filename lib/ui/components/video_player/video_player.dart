@@ -28,6 +28,7 @@ class VideoWidget extends HookWidget {
       BetterPlayerConfiguration betterPlayerConfiguration =
           BetterPlayerConfiguration(
               aspectRatio: 4 / 3,
+              allowedScreenSleep: false,
               fullScreenAspectRatio: 4 / 3,
               fit: BoxFit.cover,
               autoDetectFullscreenDeviceOrientation: true,

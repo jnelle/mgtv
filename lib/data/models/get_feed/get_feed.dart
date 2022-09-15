@@ -13,8 +13,8 @@ class GetFeed {
   GetFeed({this.eps, this.pages, this.next, this.prev});
   List<Ep>? eps;
   int? pages;
-  int? next;
-  bool? prev;
+  dynamic next;
+  dynamic prev;
 
   Map<String, dynamic> toJson() => _$GetFeedToJson(this);
 }

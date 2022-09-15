@@ -3,6 +3,7 @@ import 'package:mgtv/ui/pages/auth/login_screen.dart';
 import 'package:mgtv/ui/pages/home/home.dart';
 import 'package:mgtv/ui/pages/home/home_clip_page.dart';
 import 'package:mgtv/ui/pages/home/home_feed.dart';
+import 'package:mgtv/ui/pages/magazine/magazine.dart';
 
 export 'app_route.gr.dart';
 
@@ -25,6 +26,11 @@ export 'app_route.gr.dart';
             path: 'feed',
             name: 'feed',
             page: HomeFeed,
+          ),
+          AutoRoute(
+            path: 'magazine',
+            name: 'magazine',
+            page: MagazinePage,
           ),
         ]),
     AutoRoute(
