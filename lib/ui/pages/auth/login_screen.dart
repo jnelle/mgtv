@@ -49,6 +49,9 @@ class LoginScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            SizedBox(
+              height: context.heightPct(0.15),
+            ),
             Center(
               child: Assets.images.logo.svg(
                 width: context.widthPct(0.25),
