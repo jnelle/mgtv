@@ -11,8 +11,8 @@ GetFeed _$GetFeedFromJson(Map<String, dynamic> json) => GetFeed(
           ?.map((e) => Ep.fromJson(e as Map<String, dynamic>))
           .toList(),
       pages: json['pages'] as int?,
-      next: json['next'] as int?,
-      prev: json['prev'] as bool?,
+      next: json['next'],
+      prev: json['prev'],
     );
 
 Map<String, dynamic> _$GetFeedToJson(GetFeed instance) => <String, dynamic>{
