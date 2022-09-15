@@ -53,7 +53,7 @@ class AppDio with DioMixin implements Dio {
       // Local Log
       interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
     }
-
+    interceptors.add(EncodingInterceptor());
     httpClientAdapter = DefaultHttpClientAdapter();
   }
   AppDio(this.baseUrl);
@@ -61,4 +61,38 @@ class AppDio with DioMixin implements Dio {
   final String baseUrl;
 
   Dio getInstance() => AppDio._(baseUrl);
+}
+
+class EncodingInterceptor extends Interceptor {
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    if (options.queryParameters.isEmpty) {
+      super.onRequest(options, handler);
+      return;
+    }
+
+    final String queryParams = _getQueryParams(options.queryParameters);
+    handler.next(
+      options.copyWith(
+        path: _getNormalizedUrl(options.path, queryParams),
+        queryParameters: Map<String, dynamic>.from(<String, dynamic>{}),
+      ),
+    );
+  }
+
+  String _getNormalizedUrl(String baseUrl, String queryParams) {
+    if (baseUrl.contains('?')) {
+      return '$baseUrl&$queryParams';
+    } else {
+      return '$baseUrl?$queryParams';
+    }
+  }
+
+  String _getQueryParams(Map<String, dynamic> map) {
+    String result = '';
+    map.forEach((String key, dynamic value) {
+      result += '$key=${Uri.decodeComponent(value.toString())}&';
+    });
+    return result;
+  }
 }
