@@ -29,8 +29,7 @@ class VideoWidget extends HookWidget {
           BetterPlayerConfiguration(
               aspectRatio: 4 / 3,
               allowedScreenSleep: false,
-              fullScreenAspectRatio: 4 / 3,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
               autoDetectFullscreenDeviceOrientation: true,
               deviceOrientationsAfterFullScreen: <DeviceOrientation>[
                 DeviceOrientation.portraitUp
@@ -42,7 +41,6 @@ class VideoWidget extends HookWidget {
               placeholder: CachedNetworkImage(
                 imageUrl: imageUrl,
                 cacheKey: videoName,
-                fit: BoxFit.cover,
               ));
       BetterPlayerDataSource dataSource =
           BetterPlayerDataSource(BetterPlayerDataSourceType.network, videoUrl,
