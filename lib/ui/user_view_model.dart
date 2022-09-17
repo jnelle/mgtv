@@ -204,7 +204,10 @@ extension FeedViewModel on UserViewModel {
 
     dom.Element? magazines =
         html.querySelector('body > div.mag-header > div.right > style');
-    String child = magazines!.text
+    magazines ??= html.querySelector('body > div.mag-header > div.right > img');
+
+    // TODO: SWITCH TO REGEX SOON
+    String? child = magazines?.text
         .split('url')
         .last
         .replaceAll('(', '')
@@ -214,7 +217,9 @@ extension FeedViewModel on UserViewModel {
         .replaceAll('}', '')
         .trim();
 
+    if (child == null || child.isEmpty) {
+      child = magazines?.attributes['src'] ?? Constants.of().defaultImage;
+    }
     return child;
-    // return magazines;
   }
 }
