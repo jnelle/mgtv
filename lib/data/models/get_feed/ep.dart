@@ -30,7 +30,7 @@ class Ep {
   String? desc;
   String? duration;
   @JsonKey(name: 'enum')
-  int? episodeNumber;
+  dynamic episodeNumber;
   String? teaserFile;
   String? thumbnail;
   int? date;

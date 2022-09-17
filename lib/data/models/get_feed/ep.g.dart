@@ -15,7 +15,7 @@ Ep _$EpFromJson(Map<String, dynamic> json) => Ep(
       img: json['img'] as String?,
       desc: json['desc'] as String?,
       duration: json['duration'] as String?,
-      episodeNumber: json['enum'] as int?,
+      episodeNumber: json['enum'],
       teaserFile: json['teaserFile'] as String?,
       thumbnail: json['thumbnail'] as String?,
       date: json['date'] as int?,
