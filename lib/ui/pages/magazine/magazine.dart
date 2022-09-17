@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mgtv/data/models/get_feed/ep.dart';
 import 'package:mgtv/data/models/get_feed/get_feed.dart';
 import 'package:mgtv/data/models/magazine/magazine.dart';
+import 'package:mgtv/data/provider/episode_provider.dart';
 import 'package:mgtv/foundation/extension/episode.dart';
 import 'package:mgtv/gen/assets.gen.dart';
 import 'package:mgtv/gen/colors.gen.dart';
@@ -134,12 +135,12 @@ class MagazinePage extends HookConsumerWidget {
                             mainFeedElement: e.toMainFeed(),
                           ),
                         ),
-                        child: EpisodeWidget(
-                            key: Key('${e.hashCode}'),
-                            episodeDescription: '${e.desc}',
-                            episodeName: '${e.title}',
-                            imageUrl: '${e.img}',
-                            magazineName: '${e.pdesc}'),
+                        child: ProviderScope(
+                          overrides: <Override>[
+                            episodeProvider.overrideWithValue(e.toMainFeed())
+                          ],
+                          child: const EpisodeWidget(),
+                        ),
                       )),
                 if (!feedSnapshot.hasData &&
                     feedSnapshot.connectionState == ConnectionState.waiting)

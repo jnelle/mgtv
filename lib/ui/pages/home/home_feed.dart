@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mgtv/data/models/main_feed/main_feed.dart';
+import 'package:mgtv/data/provider/episode_provider.dart';
 import 'package:mgtv/gen/colors.gen.dart';
 import 'package:mgtv/ui/components/appbar/home_appbar.dart';
 import 'package:mgtv/ui/components/feed/episode.dart';
@@ -45,30 +46,30 @@ class HomeFeed extends HookConsumerWidget {
         slivers: <Widget>[
           homeAppBar(title: title, imageUrl: imageUrl),
           SliverList(
-            delegate: SliverChildListDelegate(
-              mainFeed.hasData
-                  ? <Widget>[
-                      ...mainFeed.data!.map(
-                        (MainFeed e) => GestureDetector(
-                          onTap: () => router.push(Clip(mainFeedElement: e)),
-                          child: EpisodeWidget(
-                            key: Key('${e.hashCode}'),
-                            episodeDescription: '${e.desc}',
-                            episodeName: '${e.title}',
-                            imageUrl: '${e.img}',
-                            magazineName: '${e.pdesc}',
+            delegate: mainFeed.hasData
+                ? SliverChildBuilderDelegate(
+                    childCount: mainFeed.data?.length,
+                    (BuildContext _, int index) => GestureDetector(
+                          onTap: () => router.push(
+                            Clip(mainFeedElement: mainFeed.data![index]),
                           ),
-                        ),
-                      ),
-                    ]
-                  : <Widget>[
+                          child: ProviderScope(
+                            overrides: <Override>[
+                              episodeProvider
+                                  .overrideWithValue(mainFeed.data![index])
+                            ],
+                            child: const EpisodeWidget(),
+                          ),
+                        ))
+                : SliverChildListDelegate(
+                    <Widget>[
                       const Center(
                         child: CircularProgressIndicator(
                           color: ColorName.primaryColor,
                         ),
                       )
                     ],
-            ),
+                  ),
           )
         ],
       ),
