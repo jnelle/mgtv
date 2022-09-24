@@ -69,7 +69,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
   flutter_gen_runner: ^4.2.0
-  build_runner: ^2.1.11
+  build_runner: ^2.2.1
   freezed: ^2.0.3+1
   retrofit_generator: ^4.0.1
   json_serializable: ^6.3.1
