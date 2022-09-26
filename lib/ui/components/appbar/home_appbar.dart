@@ -65,7 +65,7 @@ SliverAppBar homeAppBar({
               fadeInCurve: Curves.linear,
               placeholder: (_, __) =>
                   const Center(child: CircularProgressIndicator()),
-              cacheKey: 'title',
+              cacheKey: imageUrl.data!,
               fit: BoxFit.cover,
             )
           : const SizedBox.shrink(),
