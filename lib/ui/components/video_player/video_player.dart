@@ -27,24 +27,31 @@ class VideoWidget extends HookWidget {
       Map<String, String> headers = <String, String>{'cookie': cookie};
       BetterPlayerConfiguration betterPlayerConfiguration =
           BetterPlayerConfiguration(
-              aspectRatio: 4 / 3,
-              allowedScreenSleep: false,
-              fit: BoxFit.contain,
-              autoDetectFullscreenDeviceOrientation: true,
-              deviceOrientationsAfterFullScreen: <DeviceOrientation>[
-                DeviceOrientation.portraitUp
-              ],
-              systemOverlaysAfterFullScreen: <SystemUiOverlay>[
-                SystemUiOverlay.top
-              ],
-              showPlaceholderUntilPlay: true,
-              placeholder: CachedNetworkImage(
-                imageUrl: imageUrl,
-                cacheKey: videoName,
-              ));
+        aspectRatio: 4 / 3,
+        autoDetectFullscreenAspectRatio: true,
+        autoPlay: true,
+        allowedScreenSleep: false,
+        fullScreenByDefault: true,
+        fit: BoxFit.contain,
+        autoDetectFullscreenDeviceOrientation: true,
+        deviceOrientationsAfterFullScreen: <DeviceOrientation>[
+          DeviceOrientation.portraitUp
+        ],
+        systemOverlaysAfterFullScreen: <SystemUiOverlay>[SystemUiOverlay.top],
+        showPlaceholderUntilPlay: true,
+        placeholder: CachedNetworkImage(
+          imageUrl: imageUrl,
+          cacheKey: imageUrl,
+        ),
+      );
       BetterPlayerDataSource dataSource =
           BetterPlayerDataSource(BetterPlayerDataSourceType.network, videoUrl,
               resolutions: resolutions,
+              notificationConfiguration: BetterPlayerNotificationConfiguration(
+                imageUrl: imageUrl,
+                title: videoName,
+                showNotification: true,
+              ),
               cacheConfiguration: BetterPlayerCacheConfiguration(
                 useCache: true,
                 preCacheSize: 100 * 1024 * 1024,
