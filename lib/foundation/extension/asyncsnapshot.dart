@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mgtv/gen/colors.gen.dart';
+import 'package:mgtv/ui/components/shimmer/shimmer.dart';
+import 'package:mgtv/ui/components/shimmer/skeleton.dart';
+import 'package:shimmer/shimmer.dart';
 
 extension PresentAsyncSnapshot<E> on AsyncSnapshot<E> {
   Widget present({
@@ -16,9 +18,10 @@ extension PresentAsyncSnapshot<E> on AsyncSnapshot<E> {
       case ConnectionState.active:
       case ConnectionState.waiting:
         return Center(
-          child: onWaiting?.call(context) ??
-              const CircularProgressIndicator(color: ColorName.primaryColor),
-        );
+            child: onWaiting?.call(context) ??
+                const ShimmerWidget(
+                  height: 300,
+                ));
       case ConnectionState.done:
         if (hasError) {
           return onError?.call(context, error!, stackTrace!) ??
