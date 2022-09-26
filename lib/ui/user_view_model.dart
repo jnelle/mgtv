@@ -88,6 +88,16 @@ extension AuthViewModel on UserViewModel {
     String? cookie = await _storage.read(key: Constants.of().session);
     return cookie;
   }
+
+  Future<bool> checkLogin() async {
+    bool result = await isLoggedIn();
+
+    if (result) {
+      await refreshCookie();
+      return true;
+    }
+    return false;
+  }
 }
 
 extension FeedViewModel on UserViewModel {

@@ -25,21 +25,13 @@ class LoginScreen extends HookConsumerWidget {
     StackRouter router = useRouter();
     UserViewModel userViewModel = ref.read(userViewModelProvider);
 
-    Future<void> checkLogin() async {
-      bool result = await userViewModel.isLoggedIn();
-
-      if (result) {
-        await userViewModel.refreshCookie();
-        String? cookie = await userViewModel.getCookie();
-        if (cookie != null) {
-          userViewModel.setCookie = cookie;
-        }
-        router.replace(const Home());
-      }
-    }
-
     useEffect(() {
-      Future<void>.microtask(() => checkLogin());
+      Future<void>.microtask(() async {
+        bool isLoggedIn = await userViewModel.checkLogin();
+        if (isLoggedIn) {
+          router.replace(const Home());
+        }
+      });
       return () {};
     }, <Object>[]);
 
