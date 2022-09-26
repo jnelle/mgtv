@@ -12,7 +12,7 @@ import 'package:mgtv/foundation/extension/episode.dart';
 import 'package:mgtv/gen/assets.gen.dart';
 import 'package:mgtv/gen/colors.gen.dart';
 import 'package:mgtv/ui/components/feed/episode.dart';
-import 'package:mgtv/ui/hook/use_router.dart';
+import 'package:mgtv/ui/hooks/use_router.dart';
 import 'package:mgtv/ui/user_view_model.dart';
 import 'package:sized_context/sized_context.dart';
 import 'package:mgtv/ui/route/app_route.dart' as route;
