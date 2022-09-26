@@ -8,10 +8,12 @@ import 'package:mgtv/data/models/get_feed/ep.dart';
 import 'package:mgtv/data/models/get_feed/get_feed.dart';
 import 'package:mgtv/data/models/magazine/magazine.dart';
 import 'package:mgtv/data/provider/episode_provider.dart';
+import 'package:mgtv/foundation/extension/asyncsnapshot.dart';
 import 'package:mgtv/foundation/extension/episode.dart';
 import 'package:mgtv/gen/assets.gen.dart';
 import 'package:mgtv/gen/colors.gen.dart';
 import 'package:mgtv/ui/components/feed/episode.dart';
+import 'package:mgtv/ui/components/shimmer/shimmer.dart';
 import 'package:mgtv/ui/hooks/use_router.dart';
 import 'package:mgtv/ui/user_view_model.dart';
 import 'package:sized_context/sized_context.dart';
@@ -51,14 +53,14 @@ class MagazinePage extends HookConsumerWidget {
     useEffect(() {
       if (feedSnapshot.hasError ||
           magazineSnapshot.hasError ||
-          magazinePictureSnapshot.hasData) {
+          magazinePictureSnapshot.hasError) {
         userViewModel.refreshCookie();
       }
       return () {};
     }, <Object>[
       feedSnapshot.hasError,
       magazineSnapshot.hasError,
-      magazinePictureSnapshot.hasData
+      magazinePictureSnapshot.hasError
     ]);
 
     return Scaffold(
@@ -81,27 +83,29 @@ class MagazinePage extends HookConsumerWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               <Widget>[
-                if (magazinePictureSnapshot.hasData)
-                  Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    child: ClipRRect(
+                Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: magazinePictureSnapshot.present(
+                    context: context,
+                    onData: (BuildContext _, String data) => ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: CachedNetworkImage(
-                        imageUrl: magazinePictureSnapshot.data!,
+                        imageUrl: data,
                         fadeInCurve: Curves.linear,
                         errorWidget: (_, __, ___) => Assets.images.logo.svg(),
-                        placeholder: (_, __) => Assets.images.logo.svg(
-                          height: context.widthPct(0.1),
-                          width: context.widthPct(0.1),
-                        ),
-                        cacheKey: magazinePictureSnapshot.data,
+                        cacheKey: data,
                         fit: BoxFit.cover,
                       ),
                     ),
+                    onWaiting: (BuildContext context) =>
+                        ShimmerWidget(height: context.heightPct(0.2)),
                   ),
-                if (magazineSnapshot.hasData)
-                  DropdownButton<dynamic>(
+                ),
+                magazineSnapshot.present(
+                  context: context,
+                  onData: (BuildContext _, List<Magazine> data) =>
+                      DropdownButton<dynamic>(
                     enableFeedback: true,
                     alignment: Alignment.center,
                     style: GoogleFonts.montserrat(
@@ -109,9 +113,8 @@ class MagazinePage extends HookConsumerWidget {
                       fontSize: context.widthPct(0.045),
                       fontWeight: FontWeight.w600,
                     ),
-                    value: currentMagazine.value.title ??
-                        magazineSnapshot.data!.first.title,
-                    items: magazineSnapshot.data!
+                    value: currentMagazine.value.title ?? data.first.title,
+                    items: data
                         .where((Magazine element) => element.pid != null)
                         .map(
                           (Magazine e) => DropdownMenuItem<dynamic>(
@@ -127,6 +130,9 @@ class MagazinePage extends HookConsumerWidget {
                         .toList(),
                     onChanged: (dynamic _) {},
                   ),
+                  onWaiting: (BuildContext context) =>
+                      ShimmerWidget(height: context.heightPct(0.1)),
+                ),
                 if (feedSnapshot.hasData &&
                     feedSnapshot.connectionState == ConnectionState.done)
                   ...feedSnapshot.data!.eps!.map((Ep e) => GestureDetector(
