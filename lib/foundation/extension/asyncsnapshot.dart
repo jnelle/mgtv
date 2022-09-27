@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mgtv/ui/components/shimmer/shimmer.dart';
-import 'package:mgtv/ui/components/shimmer/skeleton.dart';
-import 'package:shimmer/shimmer.dart';
 
 extension PresentAsyncSnapshot<E> on AsyncSnapshot<E> {
   Widget present({
