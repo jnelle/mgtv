@@ -11,60 +11,67 @@
 // ignore_for_file: type=lint
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i6;
-import 'package:flutter/material.dart' as _i7;
-import 'package:mgtv/data/models/main_feed/main_feed.dart' as _i8;
+import 'package:auto_route/auto_route.dart' as _i7;
+import 'package:flutter/material.dart' as _i8;
+import 'package:mgtv/data/models/main_feed/main_feed.dart' as _i9;
 import 'package:mgtv/ui/pages/auth/login_screen.dart' as _i1;
 import 'package:mgtv/ui/pages/home/home.dart' as _i2;
 import 'package:mgtv/ui/pages/home/home_clip_page.dart' as _i3;
 import 'package:mgtv/ui/pages/home/home_feed.dart' as _i4;
 import 'package:mgtv/ui/pages/magazine/magazine.dart' as _i5;
+import 'package:mgtv/ui/pages/settings/settings.dart' as _i6;
 
-class AppRouter extends _i6.RootStackRouter {
-  AppRouter([_i7.GlobalKey<_i7.NavigatorState>? navigatorKey])
+class AppRouter extends _i7.RootStackRouter {
+  AppRouter([_i8.GlobalKey<_i8.NavigatorState>? navigatorKey])
       : super(navigatorKey);
 
   @override
-  final Map<String, _i6.PageFactory> pagesMap = {
+  final Map<String, _i7.PageFactory> pagesMap = {
     Login.name: (routeData) {
-      return _i6.AdaptivePage<dynamic>(
+      return _i7.AdaptivePage<dynamic>(
           routeData: routeData, child: const _i1.LoginScreen());
     },
     Home.name: (routeData) {
-      return _i6.AdaptivePage<dynamic>(
+      return _i7.AdaptivePage<dynamic>(
           routeData: routeData, child: const _i2.HomeScreen());
     },
     Clip.name: (routeData) {
       final args = routeData.argsAs<ClipArgs>();
-      return _i6.AdaptivePage<dynamic>(
+      return _i7.AdaptivePage<dynamic>(
           routeData: routeData,
           child: _i3.ClipPage(
               key: args.key, mainFeedElement: args.mainFeedElement));
     },
     Feed.name: (routeData) {
-      return _i6.AdaptivePage<dynamic>(
+      return _i7.AdaptivePage<dynamic>(
           routeData: routeData, child: const _i4.HomeFeed());
     },
     Magazine.name: (routeData) {
-      return _i6.AdaptivePage<dynamic>(
+      return _i7.AdaptivePage<dynamic>(
           routeData: routeData, child: const _i5.MagazinePage());
+    },
+    Settingspage.name: (routeData) {
+      return _i7.AdaptivePage<dynamic>(
+          routeData: routeData, child: const _i6.SettingsPage());
     }
   };
 
   @override
-  List<_i6.RouteConfig> get routes => [
-        _i6.RouteConfig(Login.name, path: '/signIn'),
-        _i6.RouteConfig(Home.name, path: '/', children: [
-          _i6.RouteConfig(Feed.name, path: 'feed', parent: Home.name),
-          _i6.RouteConfig(Magazine.name, path: 'magazine', parent: Home.name)
+  List<_i7.RouteConfig> get routes => [
+        _i7.RouteConfig(Login.name, path: '/signIn'),
+        _i7.RouteConfig(Home.name, path: '/', children: [
+          _i7.RouteConfig(Feed.name, path: 'feed', parent: Home.name),
+          _i7.RouteConfig(Magazine.name, path: 'magazine', parent: Home.name),
+          _i7.RouteConfig(Settingspage.name,
+              path: 'settings', parent: Home.name)
         ]),
-        _i6.RouteConfig(Clip.name, path: '/clip')
+        _i7.RouteConfig(Clip.name, path: '/clip')
       ];
 }
 
 /// generated route for
 /// [_i1.LoginScreen]
-class Login extends _i6.PageRouteInfo<void> {
+class Login extends _i7.PageRouteInfo<void> {
   const Login() : super(Login.name, path: '/signIn');
 
   static const String name = 'Login';
@@ -72,8 +79,8 @@ class Login extends _i6.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i2.HomeScreen]
-class Home extends _i6.PageRouteInfo<void> {
-  const Home({List<_i6.PageRouteInfo>? children})
+class Home extends _i7.PageRouteInfo<void> {
+  const Home({List<_i7.PageRouteInfo>? children})
       : super(Home.name, path: '/', initialChildren: children);
 
   static const String name = 'Home';
@@ -81,8 +88,8 @@ class Home extends _i6.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.ClipPage]
-class Clip extends _i6.PageRouteInfo<ClipArgs> {
-  Clip({_i7.Key? key, required _i8.MainFeed mainFeedElement})
+class Clip extends _i7.PageRouteInfo<ClipArgs> {
+  Clip({_i8.Key? key, required _i9.MainFeed mainFeedElement})
       : super(Clip.name,
             path: '/clip',
             args: ClipArgs(key: key, mainFeedElement: mainFeedElement));
@@ -93,9 +100,9 @@ class Clip extends _i6.PageRouteInfo<ClipArgs> {
 class ClipArgs {
   const ClipArgs({this.key, required this.mainFeedElement});
 
-  final _i7.Key? key;
+  final _i8.Key? key;
 
-  final _i8.MainFeed mainFeedElement;
+  final _i9.MainFeed mainFeedElement;
 
   @override
   String toString() {
@@ -105,7 +112,7 @@ class ClipArgs {
 
 /// generated route for
 /// [_i4.HomeFeed]
-class Feed extends _i6.PageRouteInfo<void> {
+class Feed extends _i7.PageRouteInfo<void> {
   const Feed() : super(Feed.name, path: 'feed');
 
   static const String name = 'Feed';
@@ -113,8 +120,16 @@ class Feed extends _i6.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.MagazinePage]
-class Magazine extends _i6.PageRouteInfo<void> {
+class Magazine extends _i7.PageRouteInfo<void> {
   const Magazine() : super(Magazine.name, path: 'magazine');
 
   static const String name = 'Magazine';
+}
+
+/// generated route for
+/// [_i6.SettingsPage]
+class Settingspage extends _i7.PageRouteInfo<void> {
+  const Settingspage() : super(Settingspage.name, path: 'settings');
+
+  static const String name = 'Settingspage';
 }

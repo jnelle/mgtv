@@ -39,6 +39,15 @@ class UserViewModel extends ChangeNotifier {
   String get cookie => _cookie;
 
   set setCookie(String cookie) => _cookie = cookie;
+
+  bool _onlyVideo = true;
+
+  bool get onlyVideo => _onlyVideo;
+
+  set onlyVideo(bool setVideo) {
+    _onlyVideo = setVideo;
+    notifyListeners();
+  }
 }
 
 extension AuthViewModel on UserViewModel {
