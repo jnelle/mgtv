@@ -33,7 +33,7 @@ class MagazinePage extends HookConsumerWidget {
     Future<GetFeed> feedFuture = useMemoized(
         () => userViewModel.getFeed(
               action: 'getFeed',
-              from: <String>['${currentMagazine.value.pid ?? 17}'],
+              from: <String>['${currentMagazine.value.pid ?? 23}'],
               limit: 10,
               page: 1,
               cookie: userViewModel.cookie,
@@ -42,7 +42,7 @@ class MagazinePage extends HookConsumerWidget {
     Future<String> magazinePictureFuture = useMemoized(
         () => userViewModel.getMagazineHeadPictures(
             cookie: userViewModel.cookie,
-            magazine: currentMagazine.value.title ?? 'comictalk'),
+            magazine: currentMagazine.value.title ?? 'die+mediatheke'),
         <Object>[currentMagazine.value]);
 
     AsyncSnapshot<GetFeed> feedSnapshot = useFuture(feedFuture);
@@ -133,28 +133,26 @@ class MagazinePage extends HookConsumerWidget {
                   onWaiting: (BuildContext context) =>
                       ShimmerWidget(height: context.heightPct(0.1)),
                 ),
-                if (feedSnapshot.hasData &&
-                    feedSnapshot.connectionState == ConnectionState.done)
-                  ...feedSnapshot.data!.eps!.map((Ep e) => GestureDetector(
-                        onTap: () => router.push(
-                          route.Clip(
-                            mainFeedElement: e.toMainFeed(),
+                ...feedSnapshot.presents(
+                  context: context,
+                  onData: (BuildContext context, GetFeed data) => data.eps!
+                      .map(
+                        (Ep e) => GestureDetector(
+                          onTap: () => router.push(
+                            route.Clip(
+                              mainFeedElement: e.toMainFeed(),
+                            ),
+                          ),
+                          child: ProviderScope(
+                            overrides: <Override>[
+                              episodeProvider.overrideWithValue(e.toMainFeed())
+                            ],
+                            child: const EpisodeWidget(),
                           ),
                         ),
-                        child: ProviderScope(
-                          overrides: <Override>[
-                            episodeProvider.overrideWithValue(e.toMainFeed())
-                          ],
-                          child: const EpisodeWidget(),
-                        ),
-                      )),
-                if (!feedSnapshot.hasData &&
-                    feedSnapshot.connectionState == ConnectionState.waiting)
-                  const Center(
-                    child: CircularProgressIndicator(
-                      color: ColorName.primaryColor,
-                    ),
-                  )
+                      )
+                      .toList(),
+                ),
               ],
             ),
           ),
