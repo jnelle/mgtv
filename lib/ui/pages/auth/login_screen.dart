@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mgtv/gen/assets.gen.dart';
 import 'package:mgtv/ui/components/auth/login_form.dart';
 import 'package:mgtv/ui/components/snack_bar/snack_bar.dart';
-import 'package:mgtv/ui/hook/use_router.dart';
+import 'package:mgtv/ui/hooks/use_router.dart';
 import 'package:mgtv/ui/route/app_route.dart';
 import 'package:mgtv/ui/user_view_model.dart';
 import 'package:sized_context/sized_context.dart';
@@ -25,21 +25,13 @@ class LoginScreen extends HookConsumerWidget {
     StackRouter router = useRouter();
     UserViewModel userViewModel = ref.read(userViewModelProvider);
 
-    Future<void> checkLogin() async {
-      bool result = await userViewModel.isLoggedIn();
-
-      if (result) {
-        await userViewModel.refreshCookie();
-        String? cookie = await userViewModel.getCookie();
-        if (cookie != null) {
-          userViewModel.setCookie = cookie;
-        }
-        router.replace(const Home());
-      }
-    }
-
     useEffect(() {
-      Future<void>.microtask(() => checkLogin());
+      Future<void>.microtask(() async {
+        bool isLoggedIn = await userViewModel.checkLogin();
+        if (isLoggedIn) {
+          router.replace(const Home());
+        }
+      });
       return () {};
     }, <Object>[]);
 

@@ -1,25 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mgtv/data/models/main_feed/main_feed.dart';
+import 'package:mgtv/data/provider/episode_provider.dart';
 import 'package:mgtv/gen/assets.gen.dart';
 import 'package:mgtv/gen/colors.gen.dart';
 import 'package:sized_context/sized_context.dart';
 
-class EpisodeWidget extends StatelessWidget {
+class EpisodeWidget extends ConsumerWidget {
   const EpisodeWidget({
     Key? key,
-    required this.episodeDescription,
-    required this.episodeName,
-    required this.imageUrl,
-    required this.magazineName,
   }) : super(key: key);
 
-  final String imageUrl;
-  final String episodeName;
-  final String magazineName;
-  final String episodeDescription;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final MainFeed episode = ref.watch(episodeProvider);
     return Card(
       elevation: 3.0,
       margin: const EdgeInsets.all(8.0),
@@ -32,14 +28,14 @@ class EpisodeWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: CachedNetworkImage(
-                  imageUrl: imageUrl,
+                  imageUrl: '${episode.img}',
                   fadeInCurve: Curves.linear,
                   errorWidget: (_, __, ___) => Assets.images.logo.svg(),
                   placeholder: (_, __) => Assets.images.logo.svg(
                     height: context.widthPct(0.1),
                     width: context.widthPct(0.1),
                   ),
-                  cacheKey: episodeName,
+                  cacheKey: '${episode.episodeNumber}',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -64,7 +60,7 @@ class EpisodeWidget extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
                 child: Text(
-                  magazineName,
+                  '${episode.pdesc}',
                   style: GoogleFonts.montserrat(
                     color: Colors.black,
                     fontSize: context.widthPct(0.045),
@@ -80,7 +76,7 @@ class EpisodeWidget extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
                 child: Text(
-                  episodeName,
+                  '${episode.title}',
                   style: GoogleFonts.montserrat(
                     color: Colors.black,
                     fontSize: context.widthPct(0.04),
@@ -93,7 +89,7 @@ class EpisodeWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              episodeDescription,
+              '${episode.desc}',
               style: GoogleFonts.montserrat(
                 color: Colors.black,
                 fontSize: context.widthPct(0.0375),

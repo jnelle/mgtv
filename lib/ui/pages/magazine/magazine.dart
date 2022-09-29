@@ -7,11 +7,15 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mgtv/data/models/get_feed/ep.dart';
 import 'package:mgtv/data/models/get_feed/get_feed.dart';
 import 'package:mgtv/data/models/magazine/magazine.dart';
+import 'package:mgtv/data/provider/episode_provider.dart';
+import 'package:mgtv/data/provider/mainfeed_provider.dart';
+import 'package:mgtv/foundation/extension/asyncsnapshot.dart';
 import 'package:mgtv/foundation/extension/episode.dart';
 import 'package:mgtv/gen/assets.gen.dart';
 import 'package:mgtv/gen/colors.gen.dart';
 import 'package:mgtv/ui/components/feed/episode.dart';
-import 'package:mgtv/ui/hook/use_router.dart';
+import 'package:mgtv/ui/components/shimmer/shimmer.dart';
+import 'package:mgtv/ui/hooks/use_router.dart';
 import 'package:mgtv/ui/user_view_model.dart';
 import 'package:sized_context/sized_context.dart';
 import 'package:mgtv/ui/route/app_route.dart' as route;
@@ -30,7 +34,7 @@ class MagazinePage extends HookConsumerWidget {
     Future<GetFeed> feedFuture = useMemoized(
         () => userViewModel.getFeed(
               action: 'getFeed',
-              from: <String>['${currentMagazine.value.pid ?? 17}'],
+              from: <String>['${currentMagazine.value.pid ?? 23}'],
               limit: 10,
               page: 1,
               cookie: userViewModel.cookie,
@@ -39,7 +43,7 @@ class MagazinePage extends HookConsumerWidget {
     Future<String> magazinePictureFuture = useMemoized(
         () => userViewModel.getMagazineHeadPictures(
             cookie: userViewModel.cookie,
-            magazine: currentMagazine.value.title ?? 'comictalk'),
+            magazine: currentMagazine.value.title ?? 'die+mediatheke'),
         <Object>[currentMagazine.value]);
 
     AsyncSnapshot<GetFeed> feedSnapshot = useFuture(feedFuture);
@@ -50,14 +54,14 @@ class MagazinePage extends HookConsumerWidget {
     useEffect(() {
       if (feedSnapshot.hasError ||
           magazineSnapshot.hasError ||
-          magazinePictureSnapshot.hasData) {
+          magazinePictureSnapshot.hasError) {
         userViewModel.refreshCookie();
       }
       return () {};
     }, <Object>[
       feedSnapshot.hasError,
       magazineSnapshot.hasError,
-      magazinePictureSnapshot.hasData
+      magazinePictureSnapshot.hasError
     ]);
 
     return Scaffold(
@@ -80,79 +84,98 @@ class MagazinePage extends HookConsumerWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               <Widget>[
-                if (magazinePictureSnapshot.hasData)
-                  Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    child: ClipRRect(
+                Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: magazinePictureSnapshot.present(
+                    context: context,
+                    onData: (BuildContext _, String data) => ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: CachedNetworkImage(
-                        imageUrl: magazinePictureSnapshot.data!,
+                        imageUrl: data,
                         fadeInCurve: Curves.linear,
                         errorWidget: (_, __, ___) => Assets.images.logo.svg(),
-                        placeholder: (_, __) => Assets.images.logo.svg(
-                          height: context.widthPct(0.1),
-                          width: context.widthPct(0.1),
-                        ),
-                        cacheKey: magazinePictureSnapshot.data,
+                        cacheKey: data,
                         fit: BoxFit.cover,
                       ),
                     ),
+                    onWaiting: (BuildContext context) =>
+                        ShimmerWidget(height: context.heightPct(0.2)),
                   ),
-                if (magazineSnapshot.hasData)
-                  DropdownButton<dynamic>(
-                    enableFeedback: true,
-                    alignment: Alignment.center,
-                    style: GoogleFonts.montserrat(
-                      color: Colors.black,
-                      fontSize: context.widthPct(0.045),
-                      fontWeight: FontWeight.w600,
-                    ),
-                    value: currentMagazine.value.title ??
-                        magazineSnapshot.data!.first.title,
-                    items: magazineSnapshot.data!
-                        .where((Magazine element) => element.pid != null)
-                        .map(
-                          (Magazine e) => DropdownMenuItem<dynamic>(
-                            alignment: Alignment.center,
-                            value: e.title!,
-                            onTap: () => currentMagazine.value = e,
-                            child: Text(
-                              e.title!,
-                              style: GoogleFonts.montserrat(),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (dynamic _) {},
-                  ),
-                if (feedSnapshot.hasData &&
-                    feedSnapshot.connectionState == ConnectionState.done)
-                  ...feedSnapshot.data!.eps!.map((Ep e) => GestureDetector(
-                        onTap: () => router.push(
-                          route.Clip(
-                            mainFeedElement: e.toMainFeed(),
+                ),
+                magazineSnapshot.present(
+                  context: context,
+                  onData: (BuildContext _, List<Magazine> data) {
+                    userViewModel.magazines = data;
+                    return MagazineDropDown(currentMagazine: currentMagazine);
+                  },
+                  onWaiting: (BuildContext context) =>
+                      ShimmerWidget(height: context.heightPct(0.1)),
+                ),
+                ...feedSnapshot.presents(
+                  context: context,
+                  onData: (BuildContext context, GetFeed data) => data.eps!
+                      .map(
+                        (Ep e) => GestureDetector(
+                          onTap: () {
+                            ref.read(mainFeedProvider.notifier).state =
+                                e.toMainFeed();
+                            router.push(const route.Clip());
+                          },
+                          child: ProviderScope(
+                            overrides: <Override>[
+                              episodeProvider.overrideWithValue(e.toMainFeed())
+                            ],
+                            child: const EpisodeWidget(),
                           ),
                         ),
-                        child: EpisodeWidget(
-                            key: Key('${e.hashCode}'),
-                            episodeDescription: '${e.desc}',
-                            episodeName: '${e.title}',
-                            imageUrl: '${e.img}',
-                            magazineName: '${e.pdesc}'),
-                      )),
-                if (!feedSnapshot.hasData &&
-                    feedSnapshot.connectionState == ConnectionState.waiting)
-                  const Center(
-                    child: CircularProgressIndicator(
-                      color: ColorName.primaryColor,
-                    ),
-                  )
+                      )
+                      .toList(),
+                ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class MagazineDropDown extends ConsumerWidget {
+  const MagazineDropDown({
+    Key? key,
+    required this.currentMagazine,
+  }) : super(key: key);
+
+  final ValueNotifier<Magazine> currentMagazine;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Magazine> magazines = ref.read(userViewModelProvider).magazines;
+    return DropdownButton<dynamic>(
+      enableFeedback: true,
+      alignment: Alignment.center,
+      style: GoogleFonts.montserrat(
+        color: Colors.black,
+        fontSize: context.widthPct(0.045),
+        fontWeight: FontWeight.w600,
+      ),
+      value: currentMagazine.value.title ?? magazines.first.title,
+      items: magazines
+          .where((Magazine element) => element.pid != null)
+          .map(
+            (Magazine e) => DropdownMenuItem<dynamic>(
+              alignment: Alignment.center,
+              value: e.title!,
+              onTap: () => currentMagazine.value = e,
+              child: Text(
+                e.title!,
+                style: GoogleFonts.montserrat(),
+              ),
+            ),
+          )
+          .toList(),
+      onChanged: (dynamic _) {},
     );
   }
 }

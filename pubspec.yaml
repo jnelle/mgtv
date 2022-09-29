@@ -57,6 +57,8 @@ dependencies:
     git:
       url: https://github.com/matthewrice345/betterplayer
       ref: e45f447b6d3ae6a3404ddfd9663f8aeae864ddec
+  shimmer: ^2.0.0
+  settings_ui: ^2.0.2
     
 dev_dependencies:
   flutter_test:

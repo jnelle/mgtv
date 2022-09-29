@@ -39,6 +39,26 @@ class UserViewModel extends ChangeNotifier {
   String get cookie => _cookie;
 
   set setCookie(String cookie) => _cookie = cookie;
+
+  List<Magazine> magazines = <Magazine>[];
+
+  String _startMagazineFeed = '';
+
+  String get startMagazineFeed => _startMagazineFeed;
+
+  set startMagazineFeed(String magazine) {
+    _startMagazineFeed = magazine;
+    notifyListeners();
+  }
+
+  bool _onlyVideo = true;
+
+  bool get onlyVideo => _onlyVideo;
+
+  set onlyVideo(bool setVideo) {
+    _onlyVideo = setVideo;
+    notifyListeners();
+  }
 }
 
 extension AuthViewModel on UserViewModel {
@@ -87,6 +107,16 @@ extension AuthViewModel on UserViewModel {
   Future<String?> getCookie() async {
     String? cookie = await _storage.read(key: Constants.of().session);
     return cookie;
+  }
+
+  Future<bool> checkLogin() async {
+    bool result = await isLoggedIn();
+
+    if (result) {
+      await refreshCookie();
+      return true;
+    }
+    return false;
   }
 }
 
@@ -204,7 +234,10 @@ extension FeedViewModel on UserViewModel {
 
     dom.Element? magazines =
         html.querySelector('body > div.mag-header > div.right > style');
-    String child = magazines!.text
+    magazines ??= html.querySelector('body > div.mag-header > div.right > img');
+
+    // TODO: SWITCH TO REGEX SOON
+    String? child = magazines?.text
         .split('url')
         .last
         .replaceAll('(', '')
@@ -214,7 +247,9 @@ extension FeedViewModel on UserViewModel {
         .replaceAll('}', '')
         .trim();
 
+    if (child == null || child.isEmpty) {
+      child = magazines?.attributes['src'] ?? Constants.of().defaultImage;
+    }
     return child;
-    // return magazines;
   }
 }
