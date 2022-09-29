@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mgtv/data/models/main_feed/main_feed.dart';
 import 'package:mgtv/data/provider/episode_provider.dart';
+import 'package:mgtv/data/provider/mainfeed_provider.dart';
 import 'package:mgtv/foundation/extension/asyncsnapshot.dart';
 import 'package:mgtv/gen/colors.gen.dart';
 import 'package:mgtv/ui/components/appbar/home_appbar.dart';
@@ -54,9 +55,12 @@ class HomeFeed extends HookConsumerWidget {
                 context: context,
                 onData: (BuildContext _, List<MainFeed> feed) =>
                     GestureDetector(
-                  onTap: () => router.push(
-                    Clip(mainFeedElement: feed[index]),
-                  ),
+                  onTap: () {
+                    ref.read(mainFeedProvider.notifier).state = feed[index];
+                    router.push(
+                      const Clip(),
+                    );
+                  },
                   child: ProviderScope(
                     overrides: <Override>[
                       episodeProvider.overrideWithValue(feed[index])

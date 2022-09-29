@@ -8,6 +8,7 @@ import 'package:mgtv/data/models/get_feed/ep.dart';
 import 'package:mgtv/data/models/get_feed/get_feed.dart';
 import 'package:mgtv/data/models/magazine/magazine.dart';
 import 'package:mgtv/data/provider/episode_provider.dart';
+import 'package:mgtv/data/provider/mainfeed_provider.dart';
 import 'package:mgtv/foundation/extension/asyncsnapshot.dart';
 import 'package:mgtv/foundation/extension/episode.dart';
 import 'package:mgtv/gen/assets.gen.dart';
@@ -104,32 +105,10 @@ class MagazinePage extends HookConsumerWidget {
                 ),
                 magazineSnapshot.present(
                   context: context,
-                  onData: (BuildContext _, List<Magazine> data) =>
-                      DropdownButton<dynamic>(
-                    enableFeedback: true,
-                    alignment: Alignment.center,
-                    style: GoogleFonts.montserrat(
-                      color: Colors.black,
-                      fontSize: context.widthPct(0.045),
-                      fontWeight: FontWeight.w600,
-                    ),
-                    value: currentMagazine.value.title ?? data.first.title,
-                    items: data
-                        .where((Magazine element) => element.pid != null)
-                        .map(
-                          (Magazine e) => DropdownMenuItem<dynamic>(
-                            alignment: Alignment.center,
-                            value: e.title!,
-                            onTap: () => currentMagazine.value = e,
-                            child: Text(
-                              e.title!,
-                              style: GoogleFonts.montserrat(),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (dynamic _) {},
-                  ),
+                  onData: (BuildContext _, List<Magazine> data) {
+                    userViewModel.magazines = data;
+                    return MagazineDropDown(currentMagazine: currentMagazine);
+                  },
                   onWaiting: (BuildContext context) =>
                       ShimmerWidget(height: context.heightPct(0.1)),
                 ),
@@ -138,11 +117,11 @@ class MagazinePage extends HookConsumerWidget {
                   onData: (BuildContext context, GetFeed data) => data.eps!
                       .map(
                         (Ep e) => GestureDetector(
-                          onTap: () => router.push(
-                            route.Clip(
-                              mainFeedElement: e.toMainFeed(),
-                            ),
-                          ),
+                          onTap: () {
+                            ref.read(mainFeedProvider.notifier).state =
+                                e.toMainFeed();
+                            router.push(const route.Clip());
+                          },
                           child: ProviderScope(
                             overrides: <Override>[
                               episodeProvider.overrideWithValue(e.toMainFeed())
@@ -158,6 +137,45 @@ class MagazinePage extends HookConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class MagazineDropDown extends ConsumerWidget {
+  const MagazineDropDown({
+    Key? key,
+    required this.currentMagazine,
+  }) : super(key: key);
+
+  final ValueNotifier<Magazine> currentMagazine;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Magazine> magazines = ref.read(userViewModelProvider).magazines;
+    return DropdownButton<dynamic>(
+      enableFeedback: true,
+      alignment: Alignment.center,
+      style: GoogleFonts.montserrat(
+        color: Colors.black,
+        fontSize: context.widthPct(0.045),
+        fontWeight: FontWeight.w600,
+      ),
+      value: currentMagazine.value.title ?? magazines.first.title,
+      items: magazines
+          .where((Magazine element) => element.pid != null)
+          .map(
+            (Magazine e) => DropdownMenuItem<dynamic>(
+              alignment: Alignment.center,
+              value: e.title!,
+              onTap: () => currentMagazine.value = e,
+              child: Text(
+                e.title!,
+                style: GoogleFonts.montserrat(),
+              ),
+            ),
+          )
+          .toList(),
+      onChanged: (dynamic _) {},
     );
   }
 }

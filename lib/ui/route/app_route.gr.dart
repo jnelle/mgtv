@@ -13,7 +13,6 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i7;
 import 'package:flutter/material.dart' as _i8;
-import 'package:mgtv/data/models/main_feed/main_feed.dart' as _i9;
 import 'package:mgtv/ui/pages/auth/login_screen.dart' as _i1;
 import 'package:mgtv/ui/pages/home/home.dart' as _i2;
 import 'package:mgtv/ui/pages/home/home_clip_page.dart' as _i3;
@@ -36,11 +35,8 @@ class AppRouter extends _i7.RootStackRouter {
           routeData: routeData, child: const _i2.HomeScreen());
     },
     Clip.name: (routeData) {
-      final args = routeData.argsAs<ClipArgs>();
       return _i7.AdaptivePage<dynamic>(
-          routeData: routeData,
-          child: _i3.ClipPage(
-              key: args.key, mainFeedElement: args.mainFeedElement));
+          routeData: routeData, child: const _i3.ClipPage());
     },
     Feed.name: (routeData) {
       return _i7.AdaptivePage<dynamic>(
@@ -88,26 +84,10 @@ class Home extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.ClipPage]
-class Clip extends _i7.PageRouteInfo<ClipArgs> {
-  Clip({_i8.Key? key, required _i9.MainFeed mainFeedElement})
-      : super(Clip.name,
-            path: '/clip',
-            args: ClipArgs(key: key, mainFeedElement: mainFeedElement));
+class Clip extends _i7.PageRouteInfo<void> {
+  const Clip() : super(Clip.name, path: '/clip');
 
   static const String name = 'Clip';
-}
-
-class ClipArgs {
-  const ClipArgs({this.key, required this.mainFeedElement});
-
-  final _i8.Key? key;
-
-  final _i9.MainFeed mainFeedElement;
-
-  @override
-  String toString() {
-    return 'ClipArgs{key: $key, mainFeedElement: $mainFeedElement}';
-  }
 }
 
 /// generated route for

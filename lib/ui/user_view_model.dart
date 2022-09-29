@@ -40,6 +40,17 @@ class UserViewModel extends ChangeNotifier {
 
   set setCookie(String cookie) => _cookie = cookie;
 
+  List<Magazine> magazines = <Magazine>[];
+
+  String _startMagazineFeed = '';
+
+  String get startMagazineFeed => _startMagazineFeed;
+
+  set startMagazineFeed(String magazine) {
+    _startMagazineFeed = magazine;
+    notifyListeners();
+  }
+
   bool _onlyVideo = true;
 
   bool get onlyVideo => _onlyVideo;
