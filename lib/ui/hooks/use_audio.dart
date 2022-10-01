@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mgtv/data/models/clip/clip.dart';
+import 'package:mgtv/ui/components/audio_player/audio_player_seekbar.dart';
 
 Widget useAudioPlayer({required AudioClip episode, required String cookie}) {
   return use(
@@ -48,7 +49,18 @@ class _AudioHookState extends HookState<Widget, _AudioHook> {
   }
 
   @override
-  Widget build(BuildContext context) => PlayButton(player: audioPlayer.player);
+  Widget build(BuildContext context) => SizedBox(
+          child: Column(
+        children: <Widget>[
+          PlayButton(player: audioPlayer.player),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: AudioPlayerSeekBar(
+              audioPlayer: audioPlayer,
+            ),
+          )
+        ],
+      ));
 
   @override
   void dispose() {
