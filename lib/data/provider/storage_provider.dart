@@ -1,5 +1,7 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-final Provider<FlutterSecureStorage> storageProvider =
-    Provider<FlutterSecureStorage>(((_) => const FlutterSecureStorage()));
+final Provider<SharedPreferences> sharedPrefProvider =
+    Provider<SharedPreferences>(
+  (_) => throw UnimplementedError('SharedPreferenceProvider not implemented'),
+);

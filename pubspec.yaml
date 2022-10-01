@@ -43,9 +43,8 @@ dependencies:
   json_annotation: ^4.7.0
   freezed_annotation: ^2.1.0
   flutter_hooks: ^0.18.5+1
-  hooks_riverpod: ^1.0.4
+  hooks_riverpod: ^2.0.0-dev.9
   flutter_svg: ^1.1.5
-  flutter_secure_storage: ^6.0.0
   sized_context: ^1.0.0+1
   auto_route: ^5.0.1
   html: ^0.15.0
@@ -59,7 +58,13 @@ dependencies:
       ref: e45f447b6d3ae6a3404ddfd9663f8aeae864ddec
   shimmer: ^2.0.0
   settings_ui: ^2.0.2
-    
+  easy_audio_player: ^0.0.1
+  just_audio: ^0.9.29
+  audio_service: ^0.18.7
+  flutter_localizations:
+    sdk: flutter
+  shared_preferences: ^2.0.15
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -70,7 +75,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
-  flutter_gen_runner: ^4.2.0
+  flutter_gen_runner: ^5.0.1
   build_runner: ^2.2.1
   freezed: ^2.0.3+1
   retrofit_generator: ^4.1.0+1

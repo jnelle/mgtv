@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:mgtv/data/app_error.dart';
@@ -17,6 +16,7 @@ import 'package:mgtv/data/repository/feed/feed_repository.dart';
 import 'package:mgtv/data/repository/feed/feed_repository_impl.dart';
 import 'package:mgtv/foundation/constants.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final ChangeNotifierProvider<UserViewModel> userViewModelProvider =
     ChangeNotifierProvider<UserViewModel>(
@@ -30,13 +30,13 @@ class UserViewModel extends ChangeNotifier {
 
   late final AuthRepository _authRepository = _reader(authRepositoryProvider);
 
-  late final FlutterSecureStorage _storage = _reader(storageProvider);
+  late final SharedPreferences _storage = _reader(sharedPrefProvider);
 
   late final FeedRepository _feedRepository = _reader(feedRepositoryProvider);
 
   String _cookie = '';
 
-  String get cookie => _cookie;
+  String get cookie => _storage.getString(Constants.of().session) ?? _cookie;
 
   set setCookie(String cookie) => _cookie = cookie;
 
@@ -53,10 +53,11 @@ class UserViewModel extends ChangeNotifier {
 
   bool _onlyVideo = true;
 
-  bool get onlyVideo => _onlyVideo;
+  bool get onlyVideo => _storage.getBool('video') ?? _onlyVideo;
 
   set onlyVideo(bool setVideo) {
     _onlyVideo = setVideo;
+    _storage.setBool('video', setVideo);
     notifyListeners();
   }
 }
@@ -67,56 +68,63 @@ extension AuthViewModel on UserViewModel {
       _authRepository
           .login(email: email, password: password)
           .then((Result<HttpResponse<dynamic>> result) => result.when(
-              success: (HttpResponse<dynamic> data) {
+              success: (HttpResponse<dynamic> data) async {
                 String cookie = data.response.headers['set-cookie']!
                     .firstWhere(
                         (String element) => element.contains('_mgtvSession'))
                     .split(';')[0];
-                _storage.write(key: Constants.of().session, value: cookie);
-                _storage.write(key: Constants.of().email, value: email);
-                _storage.write(key: Constants.of().password, value: password);
+                await _storage.setString(Constants.of().session, cookie);
+                await _storage.setString(Constants.of().email, email);
+                await _storage.setString(Constants.of().password, password);
 
                 setCookie = cookie;
                 return data;
               },
               failure: (AppError error) => throw error));
   Future<void> refreshCookie() async {
-    String? email = await _storage.read(key: Constants.of().email);
-    String? password = await _storage.read(key: Constants.of().password);
+    String? email = _storage.getString(Constants.of().email);
+    String? password = _storage.getString(Constants.of().password);
 
     return _authRepository
         .login(email: email!, password: password!)
         .then((Result<HttpResponse<dynamic>> result) => result.when(
-            success: (HttpResponse<dynamic> data) {
+            success: (HttpResponse<dynamic> data) async {
               String cookie = data.response.headers['set-cookie']!
                   .firstWhere(
                       (String element) => element.contains('_mgtvSession'))
                   .split(';')[0];
-              _storage.write(key: Constants.of().session, value: cookie);
+              await _storage.setString(Constants.of().session, cookie);
               setCookie = cookie;
               return;
             },
             failure: (AppError error) => throw error));
   }
 
-  Future<bool> isLoggedIn() async {
-    return await _storage.containsKey(key: Constants.of().session) &&
-        await _storage.read(key: Constants.of().session) != null;
+  bool isLoggedIn() {
+    return _storage.getKeys().contains(Constants.of().session) &&
+        _storage.getString(Constants.of().session) != null;
   }
 
   Future<String?> getCookie() async {
-    String? cookie = await _storage.read(key: Constants.of().session);
-    return cookie;
+    return _storage.getString(Constants.of().session);
   }
 
   Future<bool> checkLogin() async {
-    bool result = await isLoggedIn();
+    bool result = isLoggedIn();
 
     if (result) {
       await refreshCookie();
       return true;
     }
     return false;
+  }
+
+  Future<void> logout() async {
+    Set<String> keys = _storage.getKeys();
+    for (String k in keys) {
+      await _storage.remove(k);
+    }
+    setCookie = '';
   }
 }
 
