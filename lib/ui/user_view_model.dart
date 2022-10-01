@@ -20,19 +20,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final ChangeNotifierProvider<UserViewModel> userViewModelProvider =
     ChangeNotifierProvider<UserViewModel>(
-        (ChangeNotifierProviderRef<UserViewModel> ref) =>
-            UserViewModel(ref.read));
+        (ChangeNotifierProviderRef<UserViewModel> ref) => UserViewModel(ref));
 
 class UserViewModel extends ChangeNotifier {
   UserViewModel(this._reader);
 
-  final Reader _reader;
+  final Ref _reader;
 
-  late final AuthRepository _authRepository = _reader(authRepositoryProvider);
+  late final AuthRepository _authRepository =
+      _reader.read(authRepositoryProvider);
 
-  late final SharedPreferences _storage = _reader(sharedPrefProvider);
+  late final SharedPreferences _storage = _reader.read(sharedPrefProvider);
 
-  late final FeedRepository _feedRepository = _reader(feedRepositoryProvider);
+  late final FeedRepository _feedRepository =
+      _reader.read(feedRepositoryProvider);
 
   String _cookie = '';
 

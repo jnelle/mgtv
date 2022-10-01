@@ -8,11 +8,14 @@ import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mgtv/foundation/constants.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:system_info/system_info.dart';
 import 'package:ua_client_hints/ua_client_hints.dart';
 
-final Provider<Dio> dioProvider =
-    Provider<Dio>((_) => AppDio(Constants.of().httpBaseUri).getInstance());
+part 'app_dio.g.dart';
+
+@riverpod
+Dio dio(_) => AppDio(Constants.of().httpBaseUri).getInstance();
 
 class AppDio with DioMixin implements Dio {
   AppDio._(this.baseUrl, [BaseOptions? options]) {

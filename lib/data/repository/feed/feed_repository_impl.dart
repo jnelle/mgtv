@@ -7,16 +7,18 @@ import 'package:mgtv/data/models/subscriptions/subscriptions.dart';
 import 'package:mgtv/data/remote/feed/feed_data.dart';
 import 'package:mgtv/data/repository/feed/feed_repository.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final Provider<FeedRepositoryImpl> feedRepositoryProvider =
-    Provider<FeedRepositoryImpl>(
-        (ProviderRef<FeedRepositoryImpl> ref) => FeedRepositoryImpl(ref.read));
+part 'feed_repository_impl.g.dart';
+
+@riverpod
+FeedRepositoryImpl feedRepository(Ref ref) => FeedRepositoryImpl(ref);
 
 class FeedRepositoryImpl implements FeedRepository {
   FeedRepositoryImpl(this._reader);
 
-  final Reader _reader;
-  late final FeedDataSource _feedDataSource = _reader(feedDataProvider);
+  final Ref _reader;
+  late final FeedDataSource _feedDataSource = _reader.read(feedDataProvider);
 
   @override
   Future<Result<HttpResponse<List<MainFeed>>>> getMainFeed(

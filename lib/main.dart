@@ -30,7 +30,7 @@ Future<void> main() async {
 
   runApp(ProviderScope(overrides: <Override>[
     sharedPrefProvider.overrideWithValue(sharedPreferences),
-    loggedInProvider.overrideWithValue(StateController<bool>(isLoggedIn)),
+    loggedInProvider.overrideWithValue(isLoggedIn),
   ], child: const MyApp()));
 }
 
@@ -45,7 +45,7 @@ class MyApp extends HookConsumerWidget {
 
     useEffect(() {
       if (isLoggedIn) {
-        Future<void>.microtask(() => userViewModel.refreshCookie());
+        Future<void>.microtask(() async => await userViewModel.refreshCookie());
       }
       return () {};
     }, <Object>[userViewModel, isLoggedIn]);

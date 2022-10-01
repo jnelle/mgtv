@@ -93,8 +93,7 @@ class ClipPage extends HookConsumerWidget {
                       return ProviderScope(
                         overrides: <Override>[
                           clipProvider.overrideWithValue(
-                              StateController<AudioClip>(
-                                  data.toAudioClip(audioUrl.last)))
+                              data.toAudioClip(audioUrl.last))
                         ],
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),

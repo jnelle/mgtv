@@ -1,5 +1,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mgtv/data/models/magazine/magazine.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final StateProvider<List<Magazine>> magazinesProvider =
-    StateProvider<List<Magazine>>(((_) => <Magazine>[]));
+part 'magazine_provider.g.dart';
+
+@riverpod
+List<Magazine> magazines(_) => <Magazine>[];

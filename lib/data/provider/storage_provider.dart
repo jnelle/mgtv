@@ -1,7 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final Provider<SharedPreferences> sharedPrefProvider =
-    Provider<SharedPreferences>(
-  (_) => throw UnimplementedError('SharedPreferenceProvider not implemented'),
-);
+part 'storage_provider.g.dart';
+
+@riverpod
+SharedPreferences sharedPref(_) =>
+    throw UnimplementedError('SharedPreferenceProvider not implemented');

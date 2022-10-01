@@ -6,15 +6,17 @@ import 'package:mgtv/data/models/subscriptions/subscriptions.dart';
 import 'package:mgtv/data/remote/app_dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'feed_data.g.dart';
 
-final Provider<FeedDataSource> feedDataProvider = Provider<FeedDataSource>(
-    (ProviderRef<FeedDataSource> ref) => FeedDataSource(ref.read));
+@riverpod
+FeedDataSource feedData(Ref ref) => FeedDataSource(ref);
 
 @RestApi()
 abstract class FeedDataSource {
-  factory FeedDataSource(Reader reader) => _FeedDataSource(reader(dioProvider));
+  factory FeedDataSource(Ref reader) =>
+      _FeedDataSource(reader.read(dioProvider));
 
   @GET('/api/v1/?action=getMainFeed')
   Future<HttpResponse<List<MainFeed>>> getMainFeed(
