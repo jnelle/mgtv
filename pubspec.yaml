@@ -43,7 +43,7 @@ dependencies:
   json_annotation: ^4.7.0
   freezed_annotation: ^2.1.0
   flutter_hooks: ^0.18.5+1
-  hooks_riverpod: ^2.0.0-dev.9
+  hooks_riverpod: ^2.0.2
   flutter_svg: ^1.1.5
   sized_context: ^1.0.0+1
   auto_route: ^5.0.1
