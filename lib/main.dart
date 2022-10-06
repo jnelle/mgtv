@@ -58,7 +58,7 @@ class MyApp extends HookConsumerWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: ColorName.primaryColor,
       ),
       routeInformationParser: appRouter.defaultRouteParser(),
       routerDelegate: appRouter.delegate(
