@@ -40,13 +40,18 @@ class MyApp extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final UserViewModel userViewModel = ref.read(userViewModelProvider);
+    SharedPreferences sharedPref = ref.read(sharedPrefProvider);
     final AppRouter appRouter = useMemoized(() => AppRouter());
     final bool isLoggedIn = ref.watch(loggedInProvider);
 
     useEffect(() {
       if (isLoggedIn) {
-        Future<void>.microtask(() async => await userViewModel.refreshCookie());
+        Future<void>.microtask(() async {
+          userViewModel.cookie = sharedPref.getString(Constants.of().session)!;
+          await userViewModel.refreshCookie();
+        });
       }
+
       return () {};
     }, <Object>[userViewModel, isLoggedIn]);
 

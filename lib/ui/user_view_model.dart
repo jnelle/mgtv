@@ -39,7 +39,7 @@ class UserViewModel extends ChangeNotifier {
 
   String get cookie => _storage.getString(Constants.of().session) ?? _cookie;
 
-  set setCookie(String cookie) => _cookie = cookie;
+  set cookie(String cookie) => _cookie = cookie;
 
   List<Magazine> magazines = <Magazine>[];
 
@@ -78,7 +78,7 @@ extension AuthViewModel on UserViewModel {
                 await _storage.setString(Constants.of().email, email);
                 await _storage.setString(Constants.of().password, password);
 
-                setCookie = cookie;
+                cookie = cookie;
                 return data;
               },
               failure: (AppError error) => throw error));
@@ -95,7 +95,7 @@ extension AuthViewModel on UserViewModel {
                       (String element) => element.contains('_mgtvSession'))
                   .split(';')[0];
               await _storage.setString(Constants.of().session, cookie);
-              setCookie = cookie;
+              cookie = cookie;
               return;
             },
             failure: (AppError error) => throw error));
@@ -125,7 +125,7 @@ extension AuthViewModel on UserViewModel {
     for (String k in keys) {
       await _storage.remove(k);
     }
-    setCookie = '';
+    cookie = '';
   }
 }
 
