@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mgtv/data/models/clip/clip.dart';
 import 'package:mgtv/data/models/get_clip/file.dart';
 import 'package:mgtv/data/models/get_clip/get_clip.dart';
 import 'package:mgtv/data/models/main_feed/main_feed.dart';
@@ -26,7 +25,7 @@ class ClipPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    UserViewModel userViewModel = ref.read(userViewModelProvider);
+    UserViewModel userViewModel = ref.watch(userViewModelProvider.notifier);
     final MainFeed mainFeedElement = ref.watch(mainFeedProvider);
 
     Future<GetClip> clipDetails = useMemoized(
@@ -38,7 +37,8 @@ class ClipPage extends HookConsumerWidget {
     );
     StackRouter router = useRouter();
     AsyncSnapshot<GetClip> clipDetailsSnapshot = useFuture(clipDetails);
-
+    ValueNotifier<Map<String, String>> resolutions =
+        useState(<String, String>{});
     return Scaffold(
       body: Container(
         color: Colors.white,
@@ -63,15 +63,14 @@ class ClipPage extends HookConsumerWidget {
               child: clipDetailsSnapshot.present(
                   context: context,
                   onData: (BuildContext context, GetClip data) {
-                    Map<String, String> tmpMap = <String, String>{};
-
                     List<String> audioUrl = <String>[];
                     for (File element in data.files!) {
                       if (element.t! == Constants.of().musicType) {
                         audioUrl.add('https:${element.url!}');
                       }
                       if (element.t! == Constants.of().videoType) {
-                        tmpMap[element.desc!] = 'https:${element.url!}';
+                        resolutions.value[element.desc!] =
+                            'https:${element.url!}';
                       }
                     }
                     if (userViewModel.onlyVideo) {
@@ -80,7 +79,7 @@ class ClipPage extends HookConsumerWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: VideoWidget(
-                            resolutions: tmpMap,
+                            resolutions: resolutions.value,
                             videoUrl: 'https:${data.files!.first.url!}',
                             cookie: userViewModel.cookie,
                             imageUrl: data.img!,
@@ -109,7 +108,7 @@ class ClipPage extends HookConsumerWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: VideoWidget(
-                          resolutions: tmpMap,
+                          resolutions: resolutions.value,
                           videoUrl: 'https:${data.files!.first.url!}',
                           cookie: userViewModel.cookie,
                           imageUrl: data.img!,
