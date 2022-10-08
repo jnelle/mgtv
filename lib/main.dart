@@ -43,28 +43,41 @@ class MyApp extends HookConsumerWidget {
     SharedPreferences sharedPref = ref.read(sharedPrefProvider);
     final AppRouter appRouter = useMemoized(() => AppRouter());
     final bool isLoggedIn = ref.watch(loggedInProvider);
+    ValueNotifier<bool> isLoading = useState(true);
 
     useEffect(() {
       if (isLoggedIn) {
         Future<void>.microtask(() async {
           userViewModel.cookie = sharedPref.getString(Constants.of().session)!;
-          await userViewModel.refreshCookie();
+          await userViewModel
+              .refreshCookie()
+              .then((_) => isLoading.value = false);
         });
+      } else {
+        isLoading.value = false;
       }
 
       return () {};
     }, <Object>[userViewModel, isLoggedIn]);
 
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: ColorName.primaryColor,
-      ),
-      routeInformationParser: appRouter.defaultRouteParser(),
-      routerDelegate: appRouter.delegate(
-          initialRoutes: isLoggedIn
-              ? const <PageRouteInfo<dynamic>>[Home()]
-              : const <PageRouteInfo<dynamic>>[Login()]),
-    );
+    return isLoading.value
+        ? const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Center(
+                child: CircularProgressIndicator(
+              color: ColorName.primaryColor,
+            )),
+          )
+        : MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primarySwatch: ColorName.primaryColor,
+            ),
+            routeInformationParser: appRouter.defaultRouteParser(),
+            routerDelegate: appRouter.delegate(
+                initialRoutes: isLoggedIn
+                    ? const <PageRouteInfo<dynamic>>[Home()]
+                    : const <PageRouteInfo<dynamic>>[Login()]),
+          );
   }
 }
