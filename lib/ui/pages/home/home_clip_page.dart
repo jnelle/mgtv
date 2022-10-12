@@ -37,8 +37,7 @@ class ClipPage extends HookConsumerWidget {
     );
     StackRouter router = useRouter();
     AsyncSnapshot<GetClip> clipDetailsSnapshot = useFuture(clipDetails);
-    ValueNotifier<Map<String, String>> resolutions =
-        useState(<String, String>{});
+
     return Scaffold(
       body: Container(
         color: Colors.white,
@@ -64,13 +63,12 @@ class ClipPage extends HookConsumerWidget {
                   context: context,
                   onData: (BuildContext context, GetClip data) {
                     List<String> audioUrl = <String>[];
+                    Map<String, String> resolutions = <String, String>{};
                     for (File element in data.files!) {
                       if (element.t! == Constants.of().musicType) {
                         audioUrl.add('https:${element.url!}');
-                      }
-                      if (element.t! == Constants.of().videoType) {
-                        resolutions.value[element.desc!] =
-                            'https:${element.url!}';
+                      } else {
+                        resolutions[element.desc!] = 'https:${element.url!}';
                       }
                     }
                     if (userViewModel.onlyVideo) {
@@ -79,7 +77,7 @@ class ClipPage extends HookConsumerWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: VideoWidget(
-                            resolutions: resolutions.value,
+                            resolutions: resolutions,
                             videoUrl: 'https:${data.files!.first.url!}',
                             cookie: userViewModel.cookie,
                             imageUrl: data.img!,
@@ -108,7 +106,7 @@ class ClipPage extends HookConsumerWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: VideoWidget(
-                          resolutions: resolutions.value,
+                          resolutions: resolutions,
                           videoUrl: 'https:${data.files!.first.url!}',
                           cookie: userViewModel.cookie,
                           imageUrl: data.img!,
