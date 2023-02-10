@@ -51,7 +51,7 @@ dependencies:
   cached_network_image: ^3.2.2
   google_fonts: ^3.0.1
   system_info: ^1.0.1
-  package_info_plus: ^2.0.0
+  package_info_plus: ^3.0.3
   better_player:
     git:
       url: https://github.com/matthewrice345/betterplayer
