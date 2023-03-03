@@ -47,7 +47,7 @@ dependencies:
   flutter_svg: ^1.1.5
   sized_context: ^1.0.0+1
   auto_route: ^5.0.1
-  html: ^0.15.0
+  html: ^0.15.2
   cached_network_image: ^3.2.2
   google_fonts: ^3.0.1
   system_info: ^1.0.1
